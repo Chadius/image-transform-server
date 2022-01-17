@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package chadius.imageTransformServer;
+option go_package = "github.com/chadius/image_transform_server";
+
+// ImageTransformer Intercepts network calls and uses the creating-symmetry package to transform the given image.
+service ImageTransformer {
+  // Transform applies the given formula to the image and uses the output settings to return a new image.
+  rpc Transform(DataStreams) returns (Image);
+}
+
+// Raw data byte streams
+message DataStreams {
+  bytes inputImage = 1; // Can be in common image formats like PNG, JPG, BMP, GIF
+  bytes formulaData = 2; // See spec
+  bytes outputSettings = 3; // See spec
+}
+
+// Raw image data
+message Image {
+  bytes imageData = 1; // Will be in PNG format
+}
