@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	server := &transformserver.Server{}
+	server := transformserver.NewServer(nil)
 	twirpHandler := image_transform_server.NewImageTransformerServer(server)
 
 	http.ListenAndServe(":8080", twirpHandler)

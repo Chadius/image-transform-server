@@ -2,6 +2,7 @@ package image_transform_server_test
 
 import (
 	"bytes"
+	creatingsymmetry "github.com/Chadius/creating-symmetry"
 	"github.com/chadius/image-transform-server/creatingsymmetryfakes"
 	"github.com/chadius/image-transform-server/internal/transformserver"
 	"github.com/chadius/image-transform-server/rpc/transform/github.com/chadius/image_transform_server"
@@ -12,14 +13,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
-func TestExampleTestSuite(t *testing.T) {
-	suite.Run(t, new(UsePackageTestSuite))
+func TestServerUsesPackageSuite(t *testing.T) {
+	suite.Run(t, new(ServerUsesPackageSuite))
 }
 
-type UsePackageTestSuite struct {
+type ServerUsesPackageSuite struct {
 	suite.Suite
 	request                         *http.Request
 	responseRecorder                *httptest.ResponseRecorder
@@ -31,7 +33,7 @@ type UsePackageTestSuite struct {
 	fakeTransformPackageReturnValue []byte
 }
 
-func (suite *UsePackageTestSuite) SetupTest() {
+func (suite *ServerUsesPackageSuite) SetupTest() {
 	suite.inputImageData = []byte(`images go here`)
 	suite.formulaData = []byte(`formula goes here`)
 	suite.outputSettingsData = []byte(`outputSettings go here`)
@@ -44,7 +46,7 @@ func (suite *UsePackageTestSuite) SetupTest() {
 	suite.server = suite.getServer()
 }
 
-func (suite *UsePackageTestSuite) fakeTransformerStrategyWithResponse(expectedResponse []byte) *creatingsymmetryfakes.FakeTransformerStrategy {
+func (suite *ServerUsesPackageSuite) fakeTransformerStrategyWithResponse(expectedResponse []byte) *creatingsymmetryfakes.FakeTransformerStrategy {
 	fakeTransformerStrategy := creatingsymmetryfakes.FakeTransformerStrategy{}
 	fakeTransformerStrategy.ApplyFormulaToTransformImageStub = func(inputImageDataByteStream, formulaDataByteStream, outputSettingsDataByteStream io.Reader, output io.Writer) error {
 		output.Write(expectedResponse)
@@ -53,15 +55,13 @@ func (suite *UsePackageTestSuite) fakeTransformerStrategyWithResponse(expectedRe
 	return &fakeTransformerStrategy
 }
 
-func (suite *UsePackageTestSuite) getServer() image_transform_server.TwirpServer {
-	server := &transformserver.Server{
-		Transformer: suite.fakeTransformPackage,
-	}
+func (suite *ServerUsesPackageSuite) getServer() image_transform_server.TwirpServer {
+	server := transformserver.NewServer(suite.fakeTransformPackage)
 	twirpServer := image_transform_server.NewImageTransformerServer(server)
 	return twirpServer
 }
 
-func (suite *UsePackageTestSuite) generateProtobufRequest(requestBody *bytes.Buffer) *http.Request {
+func (suite *ServerUsesPackageSuite) generateProtobufRequest(requestBody *bytes.Buffer) *http.Request {
 	testRequest, newRequestErr := http.NewRequest(
 		http.MethodPost,
 		"/twirp/chadius.imageTransformServer.ImageTransformer/Transform",
@@ -73,7 +73,7 @@ func (suite *UsePackageTestSuite) generateProtobufRequest(requestBody *bytes.Buf
 	return testRequest
 }
 
-func (suite *UsePackageTestSuite) getDataStream() *bytes.Buffer {
+func (suite *ServerUsesPackageSuite) getDataStream() *bytes.Buffer {
 	dataStream := &image_transform_server.DataStreams{
 		InputImage:     suite.inputImageData,
 		FormulaData:    suite.formulaData,
@@ -89,7 +89,7 @@ func (suite *UsePackageTestSuite) getDataStream() *bytes.Buffer {
 	return requestBody
 }
 
-func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_ResponseIsValid() {
+func (suite *ServerUsesPackageSuite) TestWhenClientMakesRequest_ResponseIsValid() {
 	// Act
 	suite.server.ServeHTTP(suite.responseRecorder, suite.request)
 
@@ -100,7 +100,7 @@ func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_ResponseIsValid() {
 	require.Equal(200, response.StatusCode, "Status code is wrong")
 }
 
-func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_PackageIsCalledWithInputData() {
+func (suite *ServerUsesPackageSuite) TestWhenClientMakesRequest_PackageIsCalledWithInputData() {
 	// Act
 	suite.server.ServeHTTP(suite.responseRecorder, suite.request)
 
@@ -113,7 +113,7 @@ func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_PackageIsCalledWith
 	suite.requireFakePackageWasCalledWithExpectedData(require)
 }
 
-func (suite *UsePackageTestSuite) requireFakePackageWasCalledWithExpectedData(require *require.Assertions) {
+func (suite *ServerUsesPackageSuite) requireFakePackageWasCalledWithExpectedData(require *require.Assertions) {
 	require.Equal(1, suite.fakeTransformPackage.ApplyFormulaToTransformImageCallCount())
 
 	actualInputImageDataByteStream, actualFormulaDataByteStream, actualOutputSettingsDataByteStream, _ := suite.fakeTransformPackage.ApplyFormulaToTransformImageArgsForCall(0)
@@ -131,7 +131,7 @@ func (suite *UsePackageTestSuite) requireFakePackageWasCalledWithExpectedData(re
 	require.Equal(0, bytes.Compare(suite.outputSettingsData, actualOutputSettingsData), "output settings given to mock object is different")
 }
 
-func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_ResponseIsUnmarshalled() {
+func (suite *ServerUsesPackageSuite) TestWhenClientMakesRequest_ResponseIsUnmarshalled() {
 	// Act
 	suite.server.ServeHTTP(suite.responseRecorder, suite.request)
 
@@ -140,9 +140,47 @@ func (suite *UsePackageTestSuite) TestWhenClientMakesRequest_ResponseIsUnmarshal
 	suite.requireResponseDataMatches(require)
 }
 
-func (suite *UsePackageTestSuite) requireResponseDataMatches(require *require.Assertions) {
+func (suite *ServerUsesPackageSuite) requireResponseDataMatches(require *require.Assertions) {
 	output := &image_transform_server.Image{}
 	unmarshalErr := proto.Unmarshal(suite.responseRecorder.Body.Bytes(), output)
 	require.Nil(unmarshalErr, "Error while unmarshalling response body")
 	require.Equal(suite.fakeTransformPackageReturnValue, output.ImageData, "output image received from mock object is different")
+}
+
+type InjectTransformerSuite struct {
+	suite.Suite
+}
+
+func TestInjectTransformerSuite(t *testing.T) {
+	suite.Run(t, new(InjectTransformerSuite))
+}
+
+func (suite *InjectTransformerSuite) TestDefaultsToProductionImageTransformPackage() {
+	// Setup
+	productionTransformer := &creatingsymmetry.FileTransformer{}
+
+	// Act
+	server := transformserver.NewServer(nil)
+
+	// Assert
+	require := require.New(suite.T())
+	require.Equal(
+		reflect.TypeOf(server.GetTransformer()),
+		reflect.TypeOf(productionTransformer),
+	)
+}
+
+func (suite *InjectTransformerSuite) TestUsesInjectedImageTransformPackage() {
+	// Setup
+	fakeTransformer := &creatingsymmetryfakes.FakeTransformerStrategy{}
+
+	// Act
+	server := transformserver.NewServer(fakeTransformer)
+
+	// Assert
+	require := require.New(suite.T())
+	require.Equal(
+		reflect.TypeOf(server.GetTransformer()),
+		reflect.TypeOf(fakeTransformer),
+	)
 }
