@@ -2,11 +2,10 @@ module github.com/chadius/image-transform-server
 
 go 1.17
 
-replace github.com/Chadius/creating-symmetry v0.0.0-20220116205726-9731f64f2462 => ../creating-symmetry
-
 require github.com/maxbrunsfeld/counterfeiter/v6 v6.4.1
 
 require (
+	github.com/Chadius/creating-symmetry v0.0.0-20220120213105-69d2c10b8ab2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 // indirect
@@ -22,7 +21,6 @@ require (
 )
 
 require (
-	github.com/Chadius/creating-symmetry v0.0.0-20220116205726-9731f64f2462
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/golang/protobuf v1.4.3
 	github.com/kr/pretty v0.3.0 // indirect
