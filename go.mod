@@ -5,7 +5,7 @@ go 1.17
 require github.com/maxbrunsfeld/counterfeiter/v6 v6.4.1
 
 require (
-	github.com/Chadius/creating-symmetry v0.0.0-20220120213105-69d2c10b8ab2 // indirect
+	github.com/Chadius/creating-symmetry v0.0.0-20220120213105-69d2c10b8ab2
 	github.com/kr/text v0.2.0 // indirect
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 // indirect
