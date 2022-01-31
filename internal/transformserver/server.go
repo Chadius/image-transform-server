@@ -3,6 +3,7 @@ package transformserver
 import (
 	"bytes"
 	"context"
+	"fmt"
 	creatingsymmetry "github.com/Chadius/creating-symmetry"
 	"github.com/chadius/image-transform-server/rpc/transform/github.com/chadius/image_transform_server"
 )
@@ -19,10 +20,22 @@ func (s *Server) Transform(cts context.Context, data *image_transform_server.Dat
 	formulaDataByteStream := bytes.NewBuffer(data.GetFormulaData())
 	outputSettingsDataByteStream := bytes.NewBuffer(data.GetOutputSettings())
 
-	var outputImageBuffer bytes.Buffer
+	return s.transformDataIntoImage(inputImageDataByteStream, formulaDataByteStream, outputSettingsDataByteStream)
+}
 
+func (s *Server) transformDataIntoImage(inputImageDataByteStream *bytes.Buffer, formulaDataByteStream *bytes.Buffer, outputSettingsDataByteStream *bytes.Buffer) (*image_transform_server.Image, error) {
+	var packagePanicErr error
+	defer func() {
+		if panicContext := recover(); panicContext != nil {
+			packagePanicErr = fmt.Errorf("package panic: %v", panicContext)
+		}
+	}()
+	var outputImageBuffer bytes.Buffer
 	transformErr := s.GetTransformer().ApplyFormulaToTransformImage(inputImageDataByteStream, formulaDataByteStream, outputSettingsDataByteStream, &outputImageBuffer)
 	outputImage := &image_transform_server.Image{ImageData: outputImageBuffer.Bytes()}
+	if packagePanicErr != nil {
+		return outputImage, packagePanicErr
+	}
 	return outputImage, transformErr
 }
 

@@ -21,9 +21,9 @@ Call `go install` to install both tools. This will support twirp and go protobuf
 
 Write your `service.proto` file. Dashes don't really work so use all lowercase.
 
-When it's time, run this to compile the files.
+When it's time, run this to compile the protobuf and twirp files.
 ```bash
-protoc -I=./ --twirp_out=./rpc/transform service.proto
+protoc -I=./ --twirp_out=./rpc --go_out=./rpc service.proto
 ```
 
 Now I can look in `./rpc/transform/github.com/chadius/image_transform_server` for the `service.twirp.go` file.

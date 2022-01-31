@@ -2,6 +2,7 @@ package image_transform_server_test
 
 import (
 	"bytes"
+	"errors"
 	creatingsymmetry "github.com/Chadius/creating-symmetry"
 	"github.com/chadius/image-transform-server/creatingsymmetryfakes"
 	"github.com/chadius/image-transform-server/internal/transformserver"
@@ -145,6 +146,53 @@ func (suite *ServerUsesPackageSuite) requireResponseDataMatches(require *require
 	unmarshalErr := proto.Unmarshal(suite.responseRecorder.Body.Bytes(), output)
 	require.Nil(unmarshalErr, "Error while unmarshalling response body")
 	require.Equal(suite.fakeTransformPackageReturnValue, output.ImageData, "output image received from mock object is different")
+}
+
+func (suite *ServerUsesPackageSuite) TestWhenPackageRaisesError_ThenServerReturns500() {
+	// Setup
+	fakeTransformerStrategy := creatingsymmetryfakes.FakeTransformerStrategy{}
+	fakeTransformerStrategy.ApplyFormulaToTransformImageStub = func(inputImageDataByteStream, formulaDataByteStream, outputSettingsDataByteStream io.Reader, output io.Writer) error {
+		return errors.New("irrelevant error")
+	}
+	server := transformserver.NewServer(&fakeTransformerStrategy)
+	twirpServer := image_transform_server.NewImageTransformerServer(server)
+	responseRecorder := httptest.NewRecorder()
+
+	// Act
+	twirpServer.ServeHTTP(responseRecorder, suite.request)
+
+	// Require
+	response := responseRecorder.Result()
+
+	require := require.New(suite.T())
+	require.Equal(500, response.StatusCode, "Status code is wrong")
+}
+
+func (suite *ServerUsesPackageSuite) TestWhenPackagePanics_ThenServerReturns500() {
+	// Setup
+	var nilObject creatingsymmetry.TransformerStrategy
+	fakeTransformerStrategy := creatingsymmetryfakes.FakeTransformerStrategy{}
+	fakeTransformerStrategy.ApplyFormulaToTransformImageStub = func(dummyReader1, dummyReader2, dummyReader3 io.Reader, dummyWriter io.Writer) error {
+		nilObject.ApplyFormulaToTransformImage(
+			dummyReader1,
+			dummyReader2,
+			dummyReader3,
+			dummyWriter,
+		)
+		return nil
+	}
+	server := transformserver.NewServer(&fakeTransformerStrategy)
+	twirpServer := image_transform_server.NewImageTransformerServer(server)
+	responseRecorder := httptest.NewRecorder()
+
+	// Act
+	twirpServer.ServeHTTP(responseRecorder, suite.request)
+
+	// Require
+	response := responseRecorder.Result()
+
+	require := require.New(suite.T())
+	require.Equal(500, response.StatusCode, "Status code is wrong")
 }
 
 type InjectTransformerSuite struct {

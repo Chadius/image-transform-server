@@ -7,7 +7,7 @@ help:
 .PHONY=help
 
 test: ## Test all files
-	go test -v ./...
+	go test ./...
 lint: ## Lint and format all the files
 	for d in $$(go list -f {{.Dir}} ./...); do \
 		gofmt -w $${d}/*.go; \
