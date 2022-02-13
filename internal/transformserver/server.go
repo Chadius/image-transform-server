@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	creatingsymmetry "github.com/Chadius/creating-symmetry"
+	"github.com/chadius/creatingsymmetry"
 	"github.com/chadius/image-transform-server/rpc/transform/github.com/chadius/image_transform_server"
 )
 

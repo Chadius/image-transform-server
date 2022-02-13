@@ -1,5 +1,7 @@
-github.com/Chadius/creating-symmetry v0.0.0-20220120213105-69d2c10b8ab2 h1:IYDhfb9qTM1gehoNH5x18CyWr2woZqW1qVXqpb3DiD0=
-github.com/Chadius/creating-symmetry v0.0.0-20220120213105-69d2c10b8ab2/go.mod h1:vgQav1bq12Zb45S1vSrzcwk1HkEq4p8iVnMvmHDRUuc=
+github.com/chadius/creatingsymmetry v0.0.0-20220120213105-69d2c10b8ab2 h1:IYDhfb9qTM1gehoNH5x18CyWr2woZqW1qVXqpb3DiD0=
+github.com/chadius/creatingsymmetry v0.0.0-20220120213105-69d2c10b8ab2/go.mod h1:vgQav1bq12Zb45S1vSrzcwk1HkEq4p8iVnMvmHDRUuc=
+github.com/chadius/creatingsymmetry v0.0.0-20220201142513-1191fe137152 h1:j2X5DOcfcpsbRTjqhNWm++NSAm5jQ3kbo8Q82TdhFtQ=
+github.com/chadius/creatingsymmetry v0.0.0-20220201142513-1191fe137152/go.mod h1:vgQav1bq12Zb45S1vSrzcwk1HkEq4p8iVnMvmHDRUuc=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -42,6 +44,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/rogpeppe/go-internal v1.8.1 h1:geMPLpDpQOgVyCg5z5GoRwLHepNdb71NXb67XFkP+Eg=
 github.com/rogpeppe/go-internal v1.8.1/go.mod h1:JeRgkft04UBgHMgCIwADu4Pn6Mtm5d4nPKWu0nJ5d+o=
+github.com/rs/cors v1.8.2 h1:KCooALfAYGs415Cwu5ABvv9n9509fSiG5SQJn/AQo4U=
+github.com/rs/cors v1.8.2/go.mod h1:XyqrcTp5zjWr1wsJ8PIRZssZ8b/WMcMf71DJnit4EMU=
 github.com/sclevine/spec v1.4.0 h1:z/Q9idDcay5m5irkZ28M7PtQM4aOISzOpj4bUPkDee8=
 github.com/sclevine/spec v1.4.0/go.mod h1:LvpgJaFyvQzRvc1kaDs0bulYwzC70PbiYjC4QnFHkOM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

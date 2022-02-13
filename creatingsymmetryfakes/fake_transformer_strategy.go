@@ -2,10 +2,9 @@
 package creatingsymmetryfakes
 
 import (
+	"github.com/chadius/creatingsymmetry"
 	"io"
 	"sync"
-
-	creating_symmetry "github.com/Chadius/creating-symmetry"
 )
 
 type FakeTransformerStrategy struct {
@@ -115,4 +114,4 @@ func (fake *FakeTransformerStrategy) recordInvocation(key string, args []interfa
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ creating_symmetry.TransformerStrategy = new(FakeTransformerStrategy)
+var _ creatingsymmetry.TransformerStrategy = new(FakeTransformerStrategy)

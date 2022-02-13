@@ -3,7 +3,7 @@ package image_transform_server_test
 import (
 	"bytes"
 	"errors"
-	creatingsymmetry "github.com/Chadius/creating-symmetry"
+	"github.com/chadius/creatingsymmetry"
 	"github.com/chadius/image-transform-server/creatingsymmetryfakes"
 	"github.com/chadius/image-transform-server/internal/transformserver"
 	"github.com/chadius/image-transform-server/rpc/transform/github.com/chadius/image_transform_server"
